@@ -8,10 +8,13 @@ import {
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { MaterialCommunityIcons as Icon } from "@expo/vector-icons";
-import { Gap } from "@/components";
+import { Backdrop, Button, Gap } from "@/components";
 import { Audio } from "expo-av";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function Home() {
+  const insets = useSafeAreaInsets();
+
   const [sound, setSound] = useState<Audio.Sound>();
   const [isPlaying, setIsPlaying] = useState(false);
   async function playSound() {
@@ -38,10 +41,13 @@ export default function Home() {
 
   return (
     <LinearGradient colors={["#00BCD4", "#6A3DE8"]} style={{ flex: 1 }}>
-      <Gap height={StatusBar.currentHeight} />
+      <Backdrop />
+      <Gap height={insets.top + 20} />
+
       <View style={styles.viewCover}>
         <View style={styles.imgCover} />
       </View>
+
       <Gap flex={1} />
       <View
         style={{
@@ -56,7 +62,7 @@ export default function Home() {
             <Icon name="skip-previous" color={"white"} size={30} />
           </View>
         </TouchableNativeFeedback>
-        <TouchableNativeFeedback
+        {/* <TouchableNativeFeedback
           useForeground
           onPress={() => {
             isPlaying ? pauseSound() : playSound();
@@ -76,7 +82,23 @@ export default function Home() {
               size={50}
             />
           </View>
-        </TouchableNativeFeedback>
+        </TouchableNativeFeedback> */}
+        <Button
+          title=""
+          iconLeft={isPlaying ? "pause" : "play"}
+          style={styles.btnMainControl}
+          iconSize={50}
+          onPress={() => {
+            isPlaying ? pauseSound() : playSound();
+          }}
+          onLongPress={async () => {
+            if (sound) {
+              await sound.stopAsync();
+              await sound.unloadAsync();
+              setIsPlaying(false);
+            }
+          }}
+        />
         <TouchableNativeFeedback>
           <View style={{ ...styles.btnMainControl, width: 50, height: 50 }}>
             <Icon name="skip-previous" color={"white"} size={30} />
@@ -104,7 +126,6 @@ const styles = StyleSheet.create({
   btnMainControl: {
     width: 75,
     height: 75,
-    backgroundColor: "black",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 75 / 2,

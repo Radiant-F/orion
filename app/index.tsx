@@ -7,7 +7,7 @@ import { router } from "expo-router";
 export default function Splash() {
   useEffect(() => {
     setTimeout(() => {
-      router.replace("/(tabs)");
+      router.replace("/auth");
     }, 2000);
   }, []);
 
